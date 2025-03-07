@@ -1,0 +1,31 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+ 
+variables:
+  ImageName: 'anandskd/dockerdemo:$(Build.BuildId)'
+ 
+stages:
+- stage: Build
+  displayName: Build image
+  jobs:  
+  - job: Build
+    displayName: Build and push Docker image
+    steps:
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'Azure subscription 1 (38e6886c-eae8-47c2-aa63-3d14ca41c324)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          docker build -t rregistry.azurecr.io/demoapps:latest .
+          az acr login -n rregistry
+          docker push rregistry.azurecr.io/demoapps:latest 
+    
