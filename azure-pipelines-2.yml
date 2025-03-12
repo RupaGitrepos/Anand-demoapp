@@ -14,17 +14,6 @@ stages:
   - job: Build
     displayName: Build and push Docker image
     steps:
-    - task: Docker@1
-      displayName: 'Build the Docker image'
-      inputs:
-        containerregistrytype: 'Container Registry'
-        dockerRegistryEndpoint: 'ananddocker'
-        command: 'Build an image'
-        dockerFile: '/Dockerfile'
-        imageName: '$(ImageName)'
-        includeLatestTag: true
-        useDefaultContext: false
-        buildContext: '.'
     - task: AzureCLI@2
       inputs:
         azureSubscription: 'Azure subscription 1 (38e6886c-eae8-47c2-aa63-3d14ca41c324)'
