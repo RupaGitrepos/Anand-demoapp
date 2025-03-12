@@ -1,0 +1,37 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+ 
+variables:
+  ImageName: 'anandskd/dockerdemo:$(Build.BuildId)'
+ 
+stages:
+- stage: Build
+  displayName: Build image
+  jobs:  
+  - job: Build
+    displayName: Build and push Docker image
+    steps:
+    - task: Docker@1
+      displayName: 'Build the Docker image'
+      inputs:
+        containerregistrytype: 'Container Registry'
+        dockerRegistryEndpoint: 'ananddocker'
+        command: 'Build an image'
+        dockerFile: '/Dockerfile'
+        imageName: '$(ImageName)'
+        includeLatestTag: true
+        useDefaultContext: false
+        buildContext: '.'
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'Azure subscription 1 (38e6886c-eae8-47c2-aa63-3d14ca41c324)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          docker build -t azrupareg.azurecr.io/demoapps:latest .
+          az acr login -n azrupareg
+          docker push azrupareg.azurecr.io/demoapps:latest 
+    
